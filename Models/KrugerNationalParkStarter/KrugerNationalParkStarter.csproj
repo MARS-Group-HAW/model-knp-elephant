@@ -1,0 +1,31 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>netcoreapp3.1</TargetFramework>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <Compile Remove="tmp\**" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <EmbeddedResource Remove="tmp\**" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Remove="tmp\**" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Content Include="..\..\config.json">
+        <Link>config.json</Link>
+      </Content>
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\KrugerNationalPark\KrugerNationalParkTraffic\KrugerNationalParkTraffic.csproj" />
+      <ProjectReference Include="..\KrugerNationalPark\KrugerNationalPark\KrugerNationalPark.csproj" />
+    </ItemGroup>
+
+</Project>
