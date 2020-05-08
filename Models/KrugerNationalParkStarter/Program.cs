@@ -4,8 +4,6 @@ using System.IO;
 using System.Linq;
 using KrugerNationalPark.Agents;
 using KrugerNationalPark.Layers;
-using KrugerNationalParkTraffic;
-using KrugerNationalParkTraffic.Car;
 using Mars.Common.Collections;
 using Mars.Common.Logging;
 using Mars.Common.Logging.Enums;
@@ -16,10 +14,9 @@ using NetTopologySuite.Features;
 using NetTopologySuite.Geometries;
 using NetTopologySuite.IO;
 using NetTopologySuite.IO.Converters;
-using SOHCarLayer.Model;
 using SOHDomain.Output.Trips;
 
-namespace Starter
+namespace KrugerNationalParkStarter
 {
     public static class Program
     {
@@ -32,17 +29,16 @@ namespace Starter
             LoggerFactory.SetLogLevel(LogLevel.Off);
 
             // First register each layer at the runtime system
-            description.AddLayer<KNPGISRasterTempLayer>();
-            description.AddLayer<KNPTimeKeeperLayer>();
-            description.AddLayer<GISRasterFenceLayer>();
-            description.AddLayer<KNPGISRasterShadeLayer>();
-            description.AddLayer<KNPGISRasterVegetationLayer>();
-            description.AddLayer<KNPGISVectorWaterLayer>();
+            description.AddLayer<RasterTempLayer>();
+            description.AddLayer<RasterFenceLayer>();
+            description.AddLayer<RasterShadeLayer>();
+            description.AddLayer<RasterVegetationLayer>();
+            description.AddLayer<VectorWaterLayer>();
             description.AddLayer<ElephantLayer>();
-            description.AddLayer<CarLayer>();
+            description.AddLayer<KnpCarLayer>();
             
             // Second register the agent types with their respective layer type
-            description.AddAgent<CarDriver, CarLayer>();
+            description.AddAgent<KnpCarDriver, KnpCarLayer>();
             description.AddAgent<Elephant, ElephantLayer>();
             
             // Starting up
@@ -92,7 +88,7 @@ namespace Starter
             var runtimeModelExecutionGroup = result.Model.ExecutionGroups[1];
             foreach (var tickClient in runtimeModelExecutionGroup)
             {
-                if (tickClient is KnpDriver driver)
+                if (tickClient is KnpCarDriver driver)
                 {
                     var trip = driver.Trip;
                     if (trip.Count >= 2)
@@ -100,11 +96,7 @@ namespace Starter
                         var path = new LineString(trip.ToArray());
                         featureCollection.Add(new Feature(path, new AttributesTable
                         {
-                            {"targetLatitude", driver.SteeringSeat?.Route.LegacyRoute.Last().To.Position.Latitude ?? 0},
-                            {
-                                "targetLongitude",
-                                driver.SteeringSeat?.Route.LegacyRoute.Last().To.Position.Longitude ?? 0
-                            }
+                            {"color", driver.Color}
                         }));
                     }
                 }

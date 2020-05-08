@@ -4,7 +4,6 @@ using System.Linq;
 using KrugerNationalPark.Layers;
 using Mars.Components.Agents;
 using Mars.Components.Environments;
-using Mars.Core.SimulationManager.Entities;
 using Mars.Interfaces.Environment;
 using Mars.Interfaces.Layer;
 using Mars.Interfaces.LIFECapabilities;
@@ -39,10 +38,10 @@ namespace KrugerNationalPark.Agents
         
         // All required layer by used by this elephant entity
         private readonly ElephantLayer _elephantLayer;
-        private readonly KNPGISRasterVegetationLayer _vegetationLayerDgvm;
-        private readonly KNPGISRasterTempLayer _temperatureLayer;
-        private readonly KNPGISRasterShadeLayer _shadeLayer;
-        private readonly GISRasterFenceLayer _gisRasterFenceLayer;
+        private readonly RasterVegetationLayer _vegetationLayerDgvm;
+        private readonly RasterTempLayer _temperatureLayer;
+        private readonly RasterShadeLayer _shadeLayer;
+        private readonly RasterFenceLayer _rasterFenceLayer;
         
         /// <summary>
         ///  The spatial index where the elephant entity and other ones are living
@@ -72,10 +71,6 @@ namespace KrugerNationalPark.Agents
             };
 
         public Position Position { get; set; }
-        
-        public double Latitude => Position.Y;
-        
-        public double Longitude => Position.X;
         
         public double TargetLon { get; set; }
         
@@ -137,11 +132,11 @@ namespace KrugerNationalPark.Agents
             RegisterAgent registerAgent,
             UnregisterAgent unregisterAgent,
             GeoHashEnvironment<Elephant> environment,
-            KNPGISVectorWaterLayer waterPotentialLayer,
-            KNPGISRasterVegetationLayer vegetationLayerDgvm,
-            GISRasterFenceLayer gisRasterFenceLayer,
-            KNPGISRasterTempLayer temperatureTimeSeriesLayer,
-            KNPGISRasterShadeLayer shadeLayer,
+            VectorWaterLayer waterPotentialLayer,
+            RasterVegetationLayer vegetationLayerDgvm,
+            RasterFenceLayer rasterFenceLayer,
+            RasterTempLayer temperatureTimeSeriesLayer,
+            RasterShadeLayer shadeLayer,
             Guid id,
             double lat,
             double lon,
@@ -183,7 +178,7 @@ namespace KrugerNationalPark.Agents
             //Layers
             _elephantLayer = (ElephantLayer) layer;
             _vegetationLayerDgvm = vegetationLayerDgvm;
-            _gisRasterFenceLayer = gisRasterFenceLayer;
+            _rasterFenceLayer = rasterFenceLayer;
             _temperatureLayer = temperatureTimeSeriesLayer;
             _shadeLayer = shadeLayer;
 
@@ -468,7 +463,7 @@ namespace KrugerNationalPark.Agents
                         var targetX = res.Node.NodePosition.X;
                         var targetY = res.Node.NodePosition.Y;
 
-                        if (_gisRasterFenceLayer.IsPointInside(res.Node.NodePosition))
+                        if (_rasterFenceLayer.IsPointInside(res.Node.NodePosition))
                         {
                             var targetLon = _vegetationLayerDgvm.LowerLeft.X +
                                             targetX * _vegetationLayerDgvm.CellWidth;
@@ -577,7 +572,7 @@ namespace KrugerNationalPark.Agents
 
                 var calculatedCoordinate = Position.CalculateRelativePosition(bearing, distance);
 
-                if (_gisRasterFenceLayer.IsPointInside(calculatedCoordinate))
+                if (_rasterFenceLayer.IsPointInside(calculatedCoordinate))
                 {
                     TargetLat = targetLatitude;
                     TargetLon = targetLongitude;
@@ -603,7 +598,7 @@ namespace KrugerNationalPark.Agents
 
                 var newPos = Position.GetRelativePosition(bearing, distance);
 
-                if (_gisRasterFenceLayer.IsPointInside(newPos))
+                if (_rasterFenceLayer.IsPointInside(newPos))
                 {
                     MoveTowardsPosition(newPos.Latitude, newPos.Longitude);
                 }

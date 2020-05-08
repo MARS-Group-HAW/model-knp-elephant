@@ -6,6 +6,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\..\..\Mars.Components\Mars.Components.csproj" />
+      <ProjectReference Include="..\..\SmartOpenHamburg\SOHCarLayer\SOHCarLayer.csproj" />
     </ItemGroup>
 
 </Project>

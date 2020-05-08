@@ -7,10 +7,10 @@ namespace KrugerNationalPark.Agents
 {
     public class WaterSources
     {
-        private readonly KNPGISVectorWaterLayer _gisWaterLayer;
+        private readonly VectorWaterLayer _gisWaterLayer;
         private readonly IList<Position> _waterSources;
 
-        public WaterSources(KNPGISVectorWaterLayer gisWaterLayer)
+        public WaterSources(VectorWaterLayer gisWaterLayer)
         {
             _waterSources = new List<Position>();
             _gisWaterLayer = gisWaterLayer;

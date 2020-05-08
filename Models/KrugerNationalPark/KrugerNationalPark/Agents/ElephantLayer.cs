@@ -16,12 +16,12 @@ namespace KrugerNationalPark.Agents
 {
     public class ElephantLayer : AbstractActiveLayer, ISteppedActiveLayer
     {
-        private readonly KNPGISVectorWaterLayer _waterPotentialLayer;
-        private readonly KNPGISRasterVegetationLayer _vegetationLayerDgvm;
+        private readonly VectorWaterLayer _waterPotentialLayer;
+        private readonly RasterVegetationLayer _vegetationLayerDgvm;
         private readonly IDictionary<int, ElephantHerd> _herdMap;
-        private readonly KNPGISRasterTempLayer _temperatureLayer;
-        private readonly GISRasterFenceLayer _gisRasterFenceLayer;
-        private readonly KNPGISRasterShadeLayer _shadeLayer;
+        private readonly RasterTempLayer _temperatureLayer;
+        private readonly RasterFenceLayer _rasterFenceLayer;
+        private readonly RasterShadeLayer _shadeLayer;
         private readonly NormalDistributionGenerator _normalDistributionGenerator;
         private RegisterAgent _registerAgent;
         private UnregisterAgent _unregisterAgent;
@@ -33,11 +33,11 @@ namespace KrugerNationalPark.Agents
 
         public ElephantLayer
         (
-            KNPGISRasterVegetationLayer vegetationLayerDgvm,
-            KNPGISVectorWaterLayer waterPotentialLayer,
-            KNPGISRasterTempLayer temperatureLayer,
-            GISRasterFenceLayer gisRasterFenceLayer,
-            KNPGISRasterShadeLayer shadeLayer)
+            RasterVegetationLayer vegetationLayerDgvm,
+            VectorWaterLayer waterPotentialLayer,
+            RasterTempLayer temperatureLayer,
+            RasterFenceLayer rasterFenceLayer,
+            RasterShadeLayer shadeLayer)
         {
             _waterPotentialLayer = waterPotentialLayer;
             _vegetationLayerDgvm = vegetationLayerDgvm;
@@ -47,13 +47,13 @@ namespace KrugerNationalPark.Agents
             var baseExtent = new Envelope(vegetationLayerDgvm.Extent);
             baseExtent.ExpandedBy(waterPotentialLayer.Extent);
             baseExtent.ExpandedBy(temperatureLayer.Extent);
-            baseExtent.ExpandedBy(gisRasterFenceLayer.Extent);
+            baseExtent.ExpandedBy(rasterFenceLayer.Extent);
             baseExtent.ExpandedBy(shadeLayer.Extent);
 
             Environment = GeoHashEnvironment<Elephant>.BuildByBBox(new BoundingBox(baseExtent), 1000);
             _temperatureLayer = temperatureLayer;
             _shadeLayer = shadeLayer;
-            _gisRasterFenceLayer = gisRasterFenceLayer;
+            _rasterFenceLayer = rasterFenceLayer;
             _normalDistributionGenerator = new NormalDistributionGenerator(35, 30);
         }
         
@@ -83,7 +83,7 @@ namespace KrugerNationalPark.Agents
                     _temperatureLayer,
                     _shadeLayer,
                     _vegetationLayerDgvm,
-                    _gisRasterFenceLayer
+                    _rasterFenceLayer
                 },
                 Environment);
 
@@ -133,7 +133,7 @@ namespace KrugerNationalPark.Agents
         {
             var newElephant = new Elephant(elephantLayer, 
                 _registerAgent, _unregisterAgent, Environment, 
-                _waterPotentialLayer, _vegetationLayerDgvm,_gisRasterFenceLayer, _temperatureLayer, _shadeLayer, 
+                _waterPotentialLayer, _vegetationLayerDgvm,_rasterFenceLayer, _temperatureLayer, _shadeLayer, 
                 Guid.NewGuid(), latitude, longitude, herdId, "ELEPHANT_NEWBORN", 
                 false, biomassCellDifference, satietyMultiplier, tickSearchForFood,
                 biomassNeighbourSearchLvl, minDehydration);

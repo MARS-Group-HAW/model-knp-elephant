@@ -1,0 +1,91 @@
+{
+  "globals": {
+    "deltaT": 1,
+    "deltaTUnit": "seconds",
+    "startTime": "2019-01-01T06:00:00.000Z",
+    "endTime": "2019-01-01T18:00:00.000Z",
+    "output": "csv",
+    "options": {
+      "numberFormat": "G"
+    }
+  },
+  "layers": [
+    {
+      "name": "RasterTempLayer",
+      "file": "model_input/RCP8.5_2010_2050_temp.zip"
+    },
+    {
+      "name": "RasterFenceLayer",
+      "file": "model_input/gis_raster_border.zip"
+    },
+    {
+      "name": "RasterShadeLayer",
+      "file": "model_input/gis_raster_shade.zip"
+    },
+    {
+      "name": "RasterVegetationLayer",
+      "file": "model_input/gis_raster_biomass_ts.zip"
+    },
+    {
+      "name": "VectorWaterLayer",
+      "file": "model_input/merged_waters_fixed_with_fence_buffer.geojson"
+    },
+    {
+      "name": "KnpCarLayer",
+      "file": "model_input/knp_graph.graphml"
+    }
+  ],
+  "agents": [
+    {
+      "name": "Elephant",
+      "file": "model_input/elephant1989_constant_population_15k.csv",
+      "count": 0,
+      "frequency": 60,
+      "outputFrequency": 60,
+      "outputtype": "individual"
+    },
+    {
+      "name": "KnpCarDriver",
+      "count": 100,
+      "frequency": 1,
+      "outputFrequency": 60,
+      "outputType": "individual",
+      //"outputFilter": [{"parameter": "Tick", "operator": "in", "values": [120]}],
+      "file": "model_input/car_init.csv",
+      "mapping": [
+        {
+          "parameter": "route",
+          "field": "Route"
+        },
+        {
+          "parameter": "length",
+          "value": 4
+        },
+        {
+          "parameter": "width",
+          "value": 2
+        },
+        //{
+        //  "parameter": "maxSpeed",
+        //  "value": 8
+        //},
+        //{
+        //  "parameter": "driveMode",
+        //  "value": 3
+        //},
+        {
+          "parameter": "trafficCode",
+          "value": "south-african"
+        },
+        {
+          "parameter": "maxAcceleration",
+          "value": 0.73
+        },
+        {
+          "parameter": "maxDeceleration",
+          "value": 1.67
+        }
+      ]
+    }
+  ]
+}

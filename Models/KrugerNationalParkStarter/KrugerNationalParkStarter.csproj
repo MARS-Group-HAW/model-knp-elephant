@@ -18,13 +18,15 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Content Include="..\..\config.json">
-        <Link>config.json</Link>
-      </Content>
+        <Content Include="model_input\**\*.*">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+        <Content Include="config.json">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\KrugerNationalPark\KrugerNationalParkTraffic\KrugerNationalParkTraffic.csproj" />
       <ProjectReference Include="..\KrugerNationalPark\KrugerNationalPark\KrugerNationalPark.csproj" />
     </ItemGroup>
 
