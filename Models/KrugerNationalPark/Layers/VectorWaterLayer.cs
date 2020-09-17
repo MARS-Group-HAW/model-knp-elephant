@@ -1,5 +1,5 @@
 ﻿using Mars.Components.Layers;
-using Mars.Interfaces.Environment;
+using Mars.Interfaces.Environments;
 
 namespace KrugerNationalPark.Layers
 {

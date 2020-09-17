@@ -1,6 +1,6 @@
 ﻿using System;
 using Mars.Components.Layers;
-using Position = Mars.Interfaces.Environment.Position;
+using Position = Mars.Interfaces.Environments.Position;
 
 namespace KrugerNationalPark.Layers
 {

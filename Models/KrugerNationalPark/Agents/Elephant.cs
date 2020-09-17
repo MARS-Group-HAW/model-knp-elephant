@@ -4,9 +4,9 @@ using System.Linq;
 using KrugerNationalPark.Layers;
 using Mars.Components.Agents;
 using Mars.Components.Environments;
-using Mars.Interfaces.Environment;
-using Mars.Interfaces.Layer;
-using Mars.Interfaces.LIFECapabilities;
+using Mars.Interfaces.Environments;
+using Mars.Interfaces.Layers;
+using Mars.Interfaces.Annotations;
 
 namespace KrugerNationalPark.Agents
 {
@@ -612,7 +612,7 @@ namespace KrugerNationalPark.Agents
             {
                 if (_vegetationLayerDgvm.GetValue(Position) >= SatietyIntakeHourly[_elephantLifePeriod])
                 {
-                    _vegetationLayerDgvm.SubtractFromField(Position, SatietyIntakeHourly[_elephantLifePeriod]);
+                    _vegetationLayerDgvm.Reduce(Position.X, Position.Y, SatietyIntakeHourly[_elephantLifePeriod]);
                     biomassTaken = SatietyIntakeHourly[_elephantLifePeriod];
                 }
             }

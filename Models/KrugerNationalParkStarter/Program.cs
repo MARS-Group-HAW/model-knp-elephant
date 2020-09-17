@@ -7,14 +7,14 @@ using KrugerNationalPark.Layers;
 using Mars.Common.Collections;
 using Mars.Common.Logging;
 using Mars.Common.Logging.Enums;
-using Mars.Core.ModelContainer.Entities;
-using Mars.Core.SimulationManager.Entities;
-using Mars.Core.SimulationStarter;
+using Mars.Components.Starter;
+using Mars.Core.Model.Entities;
+using Mars.Core.Simulation.Entities;
 using NetTopologySuite.Features;
 using NetTopologySuite.Geometries;
 using NetTopologySuite.IO;
 using NetTopologySuite.IO.Converters;
-using SOHDomain.Output.Trips;
+using SOHMultimodalModel.Output.Trips;
 
 namespace KrugerNationalParkStarter
 {
@@ -40,6 +40,7 @@ namespace KrugerNationalParkStarter
             // Second register the agent types with their respective layer type
             description.AddAgent<KnpCarDriver, KnpCarLayer>();
             description.AddAgent<Elephant, ElephantLayer>();
+            description.AddEntity<KnpCar>();
             
             // Starting up
             SimulationWorkflowState result = null;
@@ -94,10 +95,7 @@ namespace KrugerNationalParkStarter
                     if (trip.Count >= 2)
                     {
                         var path = new LineString(trip.ToArray());
-                        featureCollection.Add(new Feature(path, new AttributesTable
-                        {
-                            {"color", driver.Color}
-                        }));
+                        featureCollection.Add(new Feature(path, new AttributesTable()));
                     }
                 }
             }

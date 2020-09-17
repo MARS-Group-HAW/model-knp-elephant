@@ -1,7 +1,7 @@
 using System;
-using Mars.Interfaces.Layer;
-using Mars.Interfaces.Layer.Initialization;
-using SOHCarLayer.Model;
+using Mars.Interfaces.Layers;
+using Mars.Interfaces.Layers.Initialization;
+using SOHCarModel.Model;
 
 namespace KrugerNationalPark.Agents
 {

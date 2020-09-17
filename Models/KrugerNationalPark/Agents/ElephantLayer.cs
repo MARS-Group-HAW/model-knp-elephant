@@ -8,9 +8,9 @@ using KrugerNationalPark.Layers;
 using Mars.Components.Environments;
 using Mars.Components.Layers;
 using Mars.Components.Services;
-using Mars.Interfaces.Environment;
-using Mars.Interfaces.Layer;
-using Mars.Interfaces.Layer.Initialization;
+using Mars.Interfaces.Environments;
+using Mars.Interfaces.Layers;
+using Mars.Interfaces.Layers.Initialization;
 
 namespace KrugerNationalPark.Agents
 {
@@ -65,39 +65,28 @@ namespace KrugerNationalPark.Agents
             _registerAgent = registerAgentHandle;
             _unregisterAgent = unregisterAgentHandle;
 
-            var agentInitConfig = layerInitData.AgentInitConfigs.FirstOrDefault();
+            var agentInitConfig =
+                layerInitData.AgentInitConfigs.FirstOrDefault(mapping => mapping.Type.MetaType == typeof(Elephant));
 
-            // initialize from SHUTTLE data
-            if (agentInitConfig != null && agentInitConfig.AgentInitParameters == null)
+            if (agentInitConfig != null)
             {
-                return false;
-            }
-
-            // create all agents
-            Entities = AgentManager.GetAgentsByAgentInitConfig<Elephant>
-            (agentInitConfig, registerAgentHandle, unregisterAgentHandle,
-                new List<ILayer>
-                {
-                    _waterPotentialLayer,
-                    this,
-                    _temperatureLayer,
-                    _shadeLayer,
-                    _vegetationLayerDgvm,
-                    _rasterFenceLayer
-                },
-                Environment);
-
-            Console.WriteLine("[ElephantLayer]: Created " + Entities.Count + " Agents");
-
-            // create herd objects
-            var listOfHerds =
-                Entities.Values.AsParallel().GroupBy(elephant => elephant.HerdId).Select(grp => grp.ToList())
-                    .ToList();
-
-            Console.WriteLine("[ElephantLayer]: Created " + listOfHerds.Count + " Herds");
-            Parallel.ForEach
-            (listOfHerds,
-                h =>
+                // Spawn all elephant agents
+                Entities = AgentManager.GetAgentsByAgentInitConfig<Elephant>
+                (agentInitConfig, registerAgentHandle, unregisterAgentHandle,
+                    new List<ILayer>
+                    {
+                        this, _waterPotentialLayer, _temperatureLayer, _shadeLayer, _vegetationLayerDgvm, _rasterFenceLayer
+                    },
+                    Environment);
+                Console.WriteLine("[ElephantLayer]: Created " + Entities.Count + " Agents");
+                
+                // create herd objects
+                var listOfHerds =
+                    Entities.Values.AsParallel().GroupBy(elephant => elephant.HerdId).Select(grp => grp.ToList())
+                        .ToList();
+                Console.WriteLine("[ElephantLayer]: Created " + listOfHerds.Count + " Herds");
+                
+                foreach (var h in listOfHerds)
                 {
                     var leader = h.FirstOrDefault(e => e.Leading);
                     if (leader == null)
@@ -113,11 +102,13 @@ namespace KrugerNationalPark.Agents
 
                     var other = h.Where(e => !e.Leading).ToList();
                     _herdMap.Add(leader.HerdId, new ElephantHerd(leader.HerdId, leader, other));
-                });
-
-            Console.WriteLine("[ElephantLayer]: Filled Herds");
-
-            return true;
+                }
+                
+                Console.WriteLine("[ElephantLayer]: Filled Herds");
+                return true;
+            } 
+            
+            return false;
         }
 
         public Elephant GetLeadingElephantByHerd(int herdId)

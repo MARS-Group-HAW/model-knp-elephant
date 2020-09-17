@@ -1,4 +1,7 @@
 {
+  "execution": {
+    "maxProcessCount" : 1
+  },
   "globals": {
     "deltaT": 1,
     "deltaTUnit": "seconds",
@@ -7,7 +10,8 @@
     "output": "csv",
     "options": {
       "numberFormat": "G"
-    }
+    },
+    "console" : true
   },
   "layers": [
     {
@@ -24,6 +28,7 @@
     },
     {
       "name": "RasterVegetationLayer",
+      "output": "csv",
       "file": "model_input/gis_raster_biomass_ts.zip"
     },
     {
@@ -35,18 +40,24 @@
       "file": "model_input/knp_graph.graphml"
     }
   ],
+  "entities": [
+    {
+      "name": "KnpCar",
+      "file": "model_input/car.csv"
+    }
+  ],
   "agents": [
     {
       "name": "Elephant",
       "file": "model_input/elephant1989_constant_population_15k.csv",
-      "count": 0,
+      "count": 100,
       "frequency": 60,
       "outputFrequency": 60,
       "outputtype": "individual"
     },
     {
       "name": "KnpCarDriver",
-      "count": 100,
+      "count": 1,
       "frequency": 1,
       "outputFrequency": 60,
       "outputType": "individual",

@@ -1,9 +1,12 @@
 using System;
 using System.Linq;
-using Mars.Interfaces.Environment.SpatialGraphEnvironment;
-using SOHCarLayer.Domain;
-using SOHDomain.Output.Trips;
-using SOHDomain.Steering;
+using Mars.Common.IO;
+using Mars.Interfaces.Environments.GraphCommon;
+using Mars.Interfaces.Environments.SpatialGraphEnvironment;
+using SOHCarModel.Model;
+using SOHCarModel.Steering;
+using SOHDomain.Steering.Handles;
+using SOHMultimodalModel.Output.Trips;
 using Distance = Mars.Mathematics.Distance;
 
 namespace KrugerNationalPark.Agents
@@ -29,12 +32,14 @@ namespace KrugerNationalPark.Agents
         ///     <see cref="VehicleSteeringHandle{TSteeringCapable,TPassengerCapable,TSteeringHandle,TPassengerHandle}.CalculateDrivingDistance"/>
         ///     is called.
         /// </summary>
-        protected override void HandleCustom()
+        protected override double HandleCustom(SpatialGraphExploreResult exploreResult, double deceleration)
         {
             if (IsWildlifeAhead(out var speedElephant, out var distanceElephant))
             {
-                HandleWildlifeAhead(speedElephant, distanceElephant);
+                return HandleWildlifeAhead(deceleration, speedElephant, distanceElephant);
             }
+
+            return deceleration;
         }
 
         /// <summary>Provides the possibility to tick the moving road user.</summary>
@@ -43,33 +48,22 @@ namespace KrugerNationalPark.Agents
             base.Move();
             SaveTripPosition();
         }
-        
-        private static readonly DateTime ReferenceDateTime = new DateTime(1970, 1, 1);
-        
-        private void SaveTripPosition()
-        {
-            var clock = _carLayer.Context.CurrentTimePoint.GetValueOrDefault();
-            var time = (int) clock.Subtract(ReferenceDateTime).TotalSeconds;
-            KnpCar.CarDriver.Trip.Add(new TripPosition(Position.Longitude, Position.Latitude) {UnixTimestamp = time});
-        }
 
-        
-
-        private void HandleWildlifeAhead(double speedElephantAhead, double distanceElephantAhead)
+        private double HandleWildlifeAhead(double deceleration, double speedElephantAhead, double distanceElephantAhead)
         {
             // Calculate the full stop speed change when wildlife was detected
-            var speedChange = VehicleAccelerator.CalculateSpeedChange(Car.Velocity, SpeedLimit, 
+            var speedChange = VehicleAccelerator.CalculateSpeedChange(Vehicle.Velocity, SpeedLimit, 
                 distanceElephantAhead, speedElephantAhead);
+            
             // Is used when the movement is performed
-            if (speedChange < BiggestDeceleration)
-                BiggestDeceleration = speedChange;
+            return speedChange < deceleration ? speedChange : deceleration;
         }
 
         private bool IsWildlifeAhead(out double speedElephant, out double distanceElephant)
         {
             // @Thomas: Use this to define your condition when the wildlife is ahead
             var elephantLayer = _carLayer.ElephantLayer;
-            var enumerable = elephantLayer.Environment.Explore(Car.Position, 300, 1);
+            var enumerable = elephantLayer.Environment.Explore(Vehicle.Position, 300, 1);
             
             //TODO Check for wildlife in the area by exploring elephants + rule set about how to react
 
@@ -84,13 +78,22 @@ namespace KrugerNationalPark.Agents
             if (elephant != null)
             {
                 speedElephant = 5;
-                distanceElephant = Distance.Haversine(elephant.Position.PositionArray, Car.Position.PositionArray);
+                distanceElephant = Distance.Haversine(elephant.Position.PositionArray, Vehicle.Position.PositionArray);
                 
                 //Console.WriteLine("Elephant ahead in: " + distanceElephant + " m");
                 return true;
             }
 
             return false;
+        }
+        
+        private static readonly DateTime ReferenceDateTime = new DateTime(1970, 1, 1);
+        
+        private void SaveTripPosition()
+        {
+            var clock = _carLayer.Context.CurrentTimePoint.GetValueOrDefault();
+            var time = (int) clock.Subtract(ReferenceDateTime).TotalSeconds;
+            KnpCar.CarDriver.Trip.Add(new TripPosition(Position.Longitude, Position.Latitude) {UnixTimestamp = time});
         }
     } 
 }

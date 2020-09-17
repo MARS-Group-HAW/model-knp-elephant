@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using KrugerNationalPark.Layers;
-using Mars.Interfaces.Environment;
+using Mars.Interfaces.Environments;
 
 namespace KrugerNationalPark.Agents
 {
