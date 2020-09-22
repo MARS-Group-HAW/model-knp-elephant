@@ -156,7 +156,7 @@ namespace KrugerNationalPark.Agents
             }
         }
 
-        public void PostTick()
+        public override void PostTick()
         {
             // CHECK: this must be harmonized to real elephant numbers
 
