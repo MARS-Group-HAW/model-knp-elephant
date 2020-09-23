@@ -18,7 +18,7 @@ namespace KrugerNationalPark.Agents
         public KnpCarSteeringHandle(KnpCarLayer carLayer, 
             ISpatialGraphEnvironment environment, KnpCar car, 
             ICarSteeringCapable steeringCapable) 
-            : base(environment, car, steeringCapable)
+            : base(environment, car)
         {
             _carLayer = carLayer;
             KnpCar = car;
