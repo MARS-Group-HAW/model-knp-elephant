@@ -19,7 +19,7 @@ namespace KrugerNationalPark.Layers
         /// <param name="lon"></param>
         /// <param name="maxDistance"></param>
         /// <returns>
-        ///    Returns the coordinates of the field or null if no shades were found or current field has 0 value.
+        ///     Returns the coordinates of the field or null if no shades were found or current field has 0 value.
         /// </returns>
         public Position ExploreClosestFullPotentialField(double lat, double lon, int maxDistance)
         {
@@ -29,8 +29,8 @@ namespace KrugerNationalPark.Layers
 
                 if (res.Node?.NodePosition != null)
                 {
-                    var targetLon = LowerLeft.X + res.Node.NodePosition.X * base.CellWidth;
-                    var targetLat = LowerLeft.Y + res.Node.NodePosition.Y * base.CellHeight;
+                    var targetLon = LowerLeft.X + res.Node.NodePosition.X * CellWidth;
+                    var targetLat = LowerLeft.Y + res.Node.NodePosition.Y * CellHeight;
 
                     return Position.CreateGeoPosition(targetLon, targetLat);
                 }
@@ -45,7 +45,7 @@ namespace KrugerNationalPark.Layers
         /// <param name="lat">Lat/y coordinate component</param>
         /// <param name="lon">Lon/x coordinate component</param>
         /// <returns>
-        ///    Returns true when a full potential is at the desired cell. 
+        ///     Returns true when a full potential is at the desired cell.
         /// </returns>
         public bool HasFullPotential(double lat, double lon)
         {
@@ -57,10 +57,10 @@ namespace KrugerNationalPark.Layers
 
             return false;
         }
-        
+
         private bool IsPointInside(Position coordinate)
         {
-            return Extent.Contains(coordinate.X, coordinate.Y) && Math.Abs(base.GetValue(coordinate) - 1) < 0.001;
+            return Extent.Contains(coordinate.X, coordinate.Y) && Math.Abs(GetValue(coordinate) - 1) < 0.001;
         }
     }
 }

@@ -9,9 +9,6 @@ namespace KrugerNationalPark.Agents
     /// </summary>
     public class ElephantHerd
     {
-        private int Id { get; set; }
-        public Elephant LeadingElephant { get; }
-
         public readonly List<Elephant> OtherElephants;
 
         public ElephantHerd(int herdId, Elephant leader, List<Elephant> other)
@@ -20,5 +17,8 @@ namespace KrugerNationalPark.Agents
             Id = herdId;
             LeadingElephant = leader;
         }
+
+        private int Id { get; }
+        public Elephant LeadingElephant { get; }
     }
 }

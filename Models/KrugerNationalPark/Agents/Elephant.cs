@@ -4,128 +4,14 @@ using System.Linq;
 using KrugerNationalPark.Layers;
 using Mars.Components.Agents;
 using Mars.Components.Environments;
+using Mars.Interfaces.Annotations;
 using Mars.Interfaces.Environments;
 using Mars.Interfaces.Layers;
-using Mars.Interfaces.Annotations;
 
 namespace KrugerNationalPark.Agents
 {
     public class Elephant : Agent, IPositionable
     {
-        #region constants
-        
-        private const int RandomWalkMaxDistanceInM = 7000;
-        private const int RandomWalkMinDistanceInM = 20;
-        
-        #endregion
-        
-        #region state variables
-        
-        private int _chanceOfDeath;
-        private int _hoursLived;
-        private int _hoursWithoutWater;
-        private int _hoursWithoutFood;
-        private int _currentHourOfTheDay;
-        private bool _pregnant;
-        private int _pregnancyDuration;
-        private ElephantLifePeriod _elephantLifePeriod;
-        private ElephantType _elephantType;
-        
-        private readonly Random _random;
-        private readonly int[] _reproductionYears = {15, 40};
-        private readonly WaterSources _waterSources;
-        private Elephant _elephantLeader;
-        
-        // All required layer by used by this elephant entity
-        private readonly ElephantLayer _elephantLayer;
-        private readonly RasterVegetationLayer _vegetationLayerDgvm;
-        private readonly RasterTempLayer _temperatureLayer;
-        private readonly RasterShadeLayer _shadeLayer;
-        private readonly RasterFenceLayer _rasterFenceLayer;
-        
-        /// <summary>
-        ///  The spatial index where the elephant entity and other ones are living
-        /// </summary>
-        private readonly GeoHashEnvironment<Elephant> _elephantEnvironment;
-
-        /// <summary>
-        ///     Stage of life when change the type
-        /// </summary>
-        private readonly Dictionary<string, ElephantType> _elephantTypeMap = new Dictionary<string, ElephantType>
-        {
-            {"ELEPHANT_COW", ElephantType.ElephantCow},
-            {"ELEPHANT_BULL", ElephantType.ElephantBull},
-            {"ELEPHANT_CALF", ElephantType.ElephantCalf},
-            {"ELEPHANT_NEWBORN", ElephantType.ElephantNewborn}
-        };
-
-        /// <summary>
-        ///     Water consumption per day in litres
-        /// </summary>
-        private readonly Dictionary<ElephantLifePeriod, double> _hydrationMapDaily =
-            new Dictionary<ElephantLifePeriod, double>
-            {
-                {ElephantLifePeriod.Calf, 140.0}, // 140 liters a day
-                {ElephantLifePeriod.Adolescent, 190.0}, // 190 liters a day
-                {ElephantLifePeriod.Adult, 200.0} // 200 liters a day
-            };
-
-        public Position Position { get; set; }
-        
-        public double TargetLon { get; set; }
-        
-        public double TargetLat { get; set; }
-        
-        public MattersOfDeath MatterOfDeath { get; private set; }
-        
-        /// <summary>
-        ///     The age. The baby stage lasts from birth until the elephant has been weaned off its mother’s milk completely.
-        ///     This can be anywhere between 5 and 10 years of age. Being weaned means that the calf no longer drinks milk
-        ///     from its mother, but is able to live only on solid vegetation. For the first 3 to 5 years, most elephant
-        ///     calves are totally dependant on their mothers for their nutrition, hygiene, migration and health.
-        ///     The adolescent stage extends from the time that the elephant has been weaned (5 to 10 years of age)
-        ///     until about 17 years old. It is during this stage that the elephants reach sexual maturity. This
-        ///     generally occurs anywhere between 8 and 13 years of age. They do not usually begin to mate at this
-        ///     adolescent stage. Adolescence is the time in which young elephants begin to break away from the main
-        ///     herd. Young bulls, in particular, tend to form smaller pods of peers, known as ‘bachelor pods’. Females
-        ///     are more likely to stick to the main matriarchal herd.
-        ///     Adulthood starts at about 18 years of age, and the elephant has an average life expectancy of 70 years.
-        ///     Although sexually mature in their early teens, elephants generally only start to mate at about 20 years
-        ///     and stop bearing calves at about 50.
-        /// </summary>
-        public int Age { get; set; }
-        
-        public bool Leading { get; set; } //Flock related
-
-        internal double Satiety { get; set; } // Food related
-        
-        public string TreeInteraction { get; set; } = "none";
-
-        public int HerdId { get; }
-        
-        public double BiomassCellDifference { get; set; }
-        
-        public double Hydration { get; set; } 
-
-        public int HoursWithoutWater { get; set; }
-        
-        /// <summary>
-        ///     Elephants eat only 18 hours a day due to other tasks like sleeping for this reason we upped
-        ///     the values for hourly food consumption to amount of biomass used per day divided by the
-        ///     time they have to gain that amount.
-        /// </summary>
-        public Dictionary<ElephantLifePeriod, double> SatietyIntakeHourly { get; set; }
-        
-        public double SatietyMultiplier { get; set; }
-
-        public int BiomassNeighbourSearchLvl { get; set; }
-        
-        public int TickSearchForFood { get; set; }
-
-        public double MinDehydration { get;  set; }
-
-        #endregion
-
         [PublishForMappingInMars]
         public Elephant
         (ElephantLayer layer,
@@ -176,7 +62,7 @@ namespace KrugerNationalPark.Agents
             _elephantType = _elephantTypeMap[elephantType];
 
             //Layers
-            _elephantLayer = (ElephantLayer) layer;
+            _elephantLayer = layer;
             _vegetationLayerDgvm = vegetationLayerDgvm;
             _rasterFenceLayer = rasterFenceLayer;
             _temperatureLayer = temperatureTimeSeriesLayer;
@@ -222,7 +108,6 @@ namespace KrugerNationalPark.Agents
                     _elephantLifePeriod = GetElephantLifePeriodFromAge(Age);
 
                     if (_reproductionYears.Contains(Age))
-                    {
                         // Calculate probability of pregnancy (80%)
                         if (_random.NextDouble() <= 0.8)
                         {
@@ -233,7 +118,6 @@ namespace KrugerNationalPark.Agents
                             //random value = 22 => new in the first tick
                             _pregnancyDuration = _random.Next(0, 22);
                         }
-                    }
 
                     // CHECK: What was the semantic reason for this else-if?
 //                    else if (_reproductionYears.Contains(Age + 1))
@@ -252,13 +136,132 @@ namespace KrugerNationalPark.Agents
             _waterSources = new WaterSources(waterPotentialLayer);
 
             // Leading elephant knows about single surrounding waterpoint
-            if (Leading)
-            {
-                _waterSources.AddInitialWaterSource(lat, lon);
-            }
+            if (Leading) _waterSources.AddInitialWaterSource(lat, lon);
 
             Position = Position.CreateGeoPosition(lon, lat);
         }
+
+        public void Die(MattersOfDeath mannerOfDeath)
+        {
+            //Console.WriteLine("Elephant: Agent died: " + mannerOfDeath + ". " + Latitude + ", " + Longitude);
+            MatterOfDeath = mannerOfDeath;
+            IsAlive = false;
+            _elephantLayer.Entities.TryRemove(ID, out _);
+        }
+
+        #region constants
+
+        private const int RandomWalkMaxDistanceInM = 7000;
+        private const int RandomWalkMinDistanceInM = 20;
+
+        #endregion
+
+        #region state variables
+
+        private int _chanceOfDeath;
+        private int _hoursLived;
+        private int _hoursWithoutWater;
+        private int _hoursWithoutFood;
+        private int _currentHourOfTheDay;
+        private bool _pregnant;
+        private int _pregnancyDuration;
+        private ElephantLifePeriod _elephantLifePeriod;
+        private ElephantType _elephantType;
+
+        private readonly Random _random;
+        private readonly int[] _reproductionYears = {15, 40};
+        private readonly WaterSources _waterSources;
+        private Elephant _elephantLeader;
+
+        // All required layer by used by this elephant entity
+        private readonly ElephantLayer _elephantLayer;
+        private readonly RasterVegetationLayer _vegetationLayerDgvm;
+        private readonly RasterTempLayer _temperatureLayer;
+        private readonly RasterShadeLayer _shadeLayer;
+        private readonly RasterFenceLayer _rasterFenceLayer;
+
+        /// <summary>
+        ///     The spatial index where the elephant entity and other ones are living
+        /// </summary>
+        private readonly GeoHashEnvironment<Elephant> _elephantEnvironment;
+
+        /// <summary>
+        ///     Stage of life when change the type
+        /// </summary>
+        private readonly Dictionary<string, ElephantType> _elephantTypeMap = new Dictionary<string, ElephantType>
+        {
+            {"ELEPHANT_COW", ElephantType.ElephantCow},
+            {"ELEPHANT_BULL", ElephantType.ElephantBull},
+            {"ELEPHANT_CALF", ElephantType.ElephantCalf},
+            {"ELEPHANT_NEWBORN", ElephantType.ElephantNewborn}
+        };
+
+        /// <summary>
+        ///     Water consumption per day in litres
+        /// </summary>
+        private readonly Dictionary<ElephantLifePeriod, double> _hydrationMapDaily =
+            new Dictionary<ElephantLifePeriod, double>
+            {
+                {ElephantLifePeriod.Calf, 140.0}, // 140 liters a day
+                {ElephantLifePeriod.Adolescent, 190.0}, // 190 liters a day
+                {ElephantLifePeriod.Adult, 200.0} // 200 liters a day
+            };
+
+        public Position Position { get; set; }
+
+        public double TargetLon { get; set; }
+
+        public double TargetLat { get; set; }
+
+        public MattersOfDeath MatterOfDeath { get; private set; }
+
+        /// <summary>
+        ///     The age. The baby stage lasts from birth until the elephant has been weaned off its mother’s milk completely.
+        ///     This can be anywhere between 5 and 10 years of age. Being weaned means that the calf no longer drinks milk
+        ///     from its mother, but is able to live only on solid vegetation. For the first 3 to 5 years, most elephant
+        ///     calves are totally dependant on their mothers for their nutrition, hygiene, migration and health.
+        ///     The adolescent stage extends from the time that the elephant has been weaned (5 to 10 years of age)
+        ///     until about 17 years old. It is during this stage that the elephants reach sexual maturity. This
+        ///     generally occurs anywhere between 8 and 13 years of age. They do not usually begin to mate at this
+        ///     adolescent stage. Adolescence is the time in which young elephants begin to break away from the main
+        ///     herd. Young bulls, in particular, tend to form smaller pods of peers, known as ‘bachelor pods’. Females
+        ///     are more likely to stick to the main matriarchal herd.
+        ///     Adulthood starts at about 18 years of age, and the elephant has an average life expectancy of 70 years.
+        ///     Although sexually mature in their early teens, elephants generally only start to mate at about 20 years
+        ///     and stop bearing calves at about 50.
+        /// </summary>
+        public int Age { get; set; }
+
+        public bool Leading { get; set; } //Flock related
+
+        internal double Satiety { get; set; } // Food related
+
+        public string TreeInteraction { get; set; } = "none";
+
+        public int HerdId { get; }
+
+        public double BiomassCellDifference { get; set; }
+
+        public double Hydration { get; set; }
+
+        public int HoursWithoutWater { get; set; }
+
+        /// <summary>
+        ///     Elephants eat only 18 hours a day due to other tasks like sleeping for this reason we upped
+        ///     the values for hourly food consumption to amount of biomass used per day divided by the
+        ///     time they have to gain that amount.
+        /// </summary>
+        public Dictionary<ElephantLifePeriod, double> SatietyIntakeHourly { get; set; }
+
+        public double SatietyMultiplier { get; set; }
+
+        public int BiomassNeighbourSearchLvl { get; set; }
+
+        public int TickSearchForFood { get; set; }
+
+        public double MinDehydration { get; set; }
+
+        #endregion
 
         #region reason
 
@@ -320,10 +323,7 @@ namespace KrugerNationalPark.Agents
             if (_hoursLived == 8760)
             {
                 var alive = YearlyRoutine();
-                if (!alive)
-                {
-                    return;
-                }
+                if (!alive) return;
             }
 
             switch (_currentHourOfTheDay)
@@ -402,20 +402,16 @@ namespace KrugerNationalPark.Agents
 
                     //differentiate behavior for leaders and following family members
                     if (Leading)
-                    {
                         LeadingElephantAction();
-                    }
                     else
-                    {
                         ElephantAction();
-                    }
 
                     break;
             }
         }
 
 
-        double MetersToDecimalDegrees(double meters, double latitude)
+        private double MetersToDecimalDegrees(double meters, double latitude)
         {
             return meters / (111.32 * 1000 * Math.Cos(latitude * (Math.PI / 180)));
         }
@@ -505,13 +501,9 @@ namespace KrugerNationalPark.Agents
 
             //check if leading cow is more than 100m away
             if (distanceToLeaderInMeters > 100)
-            {
                 MoveTowardsPosition(leaderPos.Latitude, leaderPos.Longitude);
-            }
             else
-            {
                 DoRandomWalk();
-            }
         }
 
         #endregion
@@ -534,25 +526,17 @@ namespace KrugerNationalPark.Agents
 
             var foundShade = _shadeLayer.HasFullPotential(Position.Latitude, Position.Longitude);
             if ((_currentHourOfTheDay == 13 || _currentHourOfTheDay == 14) && foundShade)
-            {
                 //shadow reduces the temperature by 10 degree at 13 and 14 o'clock
                 temperatureDiff -= 10;
-            }
 
             //manually set factor to represent the distribution minimal and maximal water loss (between 100L and 300L)
             const int litersPerDegree = 5;
 
             //calculate the weighted water loss as a function of temperature basic water loss
-            if (Math.Abs(temperatureDiff) < 0.000001 && temperatureDiff > 0)
-            {
-                temperatureDiff = 1;
-            }
+            if (Math.Abs(temperatureDiff) < 0.000001 && temperatureDiff > 0) temperatureDiff = 1;
 
             var weightedWaterLoss = temperatureDiff * litersPerDegree * actualWaterLossPercentage;
-            if (weightedWaterLoss < 0)
-            {
-                weightedWaterLoss *= -1;
-            }
+            if (weightedWaterLoss < 0) weightedWaterLoss *= -1;
 
             return (basicWaterLossDaily + weightedWaterLoss) / 24.0;
         }
@@ -598,10 +582,7 @@ namespace KrugerNationalPark.Agents
 
                 var newPos = Position.GetRelativePosition(bearing, distance);
 
-                if (_rasterFenceLayer.IsPointInside(newPos))
-                {
-                    MoveTowardsPosition(newPos.Latitude, newPos.Longitude);
-                }
+                if (_rasterFenceLayer.IsPointInside(newPos)) MoveTowardsPosition(newPos.Latitude, newPos.Longitude);
             }
         }
 
@@ -609,13 +590,11 @@ namespace KrugerNationalPark.Agents
         {
             var biomassTaken = 0.0;
             if (_vegetationLayerDgvm.Extent.Contains(Position.ToCoordinate()))
-            {
                 if (_vegetationLayerDgvm.GetValue(Position) >= SatietyIntakeHourly[_elephantLifePeriod])
                 {
                     _vegetationLayerDgvm.Reduce(Position.X, Position.Y, SatietyIntakeHourly[_elephantLifePeriod]);
                     biomassTaken = SatietyIntakeHourly[_elephantLifePeriod];
                 }
-            }
 
             if (!(biomassTaken > 0))
             {
@@ -729,22 +708,11 @@ namespace KrugerNationalPark.Agents
 
         private static ElephantLifePeriod GetElephantLifePeriodFromAge(int age)
         {
-            if (age < 5)
-            {
-                return ElephantLifePeriod.Calf;
-            }
+            if (age < 5) return ElephantLifePeriod.Calf;
 
             return age <= 18 ? ElephantLifePeriod.Adolescent : ElephantLifePeriod.Adult;
         }
 
         #endregion
-
-        public void Die(MattersOfDeath mannerOfDeath)
-        {
-            //Console.WriteLine("Elephant: Agent died: " + mannerOfDeath + ". " + Latitude + ", " + Longitude);
-            MatterOfDeath = mannerOfDeath;
-            IsAlive = false;
-            _elephantLayer.Entities.TryRemove(ID, out _);
-        }
     }
 }

@@ -6,25 +6,25 @@ using SOHCarModel.Model;
 namespace KrugerNationalPark.Agents
 {
     /// <summary>
-    ///     This class represents the agent layer implementation for the <see cref="KnpCar"/> and keeps references
-    ///     to all other required layer e.g., the <see cref="ElephantLayer"/>
+    ///     This class represents the agent layer implementation for the <see cref="KnpCar" /> and keeps references
+    ///     to all other required layer e.g., the <see cref="ElephantLayer" />
     /// </summary>
     public class KnpCarLayer : CarLayer
     {
-        public ElephantLayer ElephantLayer { get; }
-
         /// <summary>
-        ///     Creates an new instance of the <see cref="KnpCarLayer"/> which done by the runtime system
+        ///     Creates an new instance of the <see cref="KnpCarLayer" /> which done by the runtime system
         ///     In order to get access to ther layer, define them as an additional parameter.
         /// </summary>
         /// <example>
-        ///    public KnpCarLayer(ElephantLayer elephantLayer, KNPGISRasterShadeLayer waterLayer)
+        ///     public KnpCarLayer(ElephantLayer elephantLayer, KNPGISRasterShadeLayer waterLayer)
         /// </example>
         /// <param name="elephantLayer"></param>
         public KnpCarLayer(ElephantLayer elephantLayer)
         {
             ElephantLayer = elephantLayer;
         }
+
+        public ElephantLayer ElephantLayer { get; }
 
         /// <summary>
         ///     Initializes the layer with layerInitData.
@@ -42,7 +42,8 @@ namespace KrugerNationalPark.Agents
         ///     <param name="registerAgentHandle"> </param>
         /// </summary>
         /// <returns>True if init finished successfully, false otherwise</returns>
-        public override bool InitLayer(TInitData layerInitData, RegisterAgent registerAgentHandle, UnregisterAgent unregisterAgentHandle)
+        public override bool InitLayer(TInitData layerInitData, RegisterAgent registerAgentHandle,
+            UnregisterAgent unregisterAgentHandle)
         {
             var result = base.InitLayer(layerInitData, registerAgentHandle, unregisterAgentHandle);
             Console.WriteLine($"[KnpCarLayer]: Created {Driver.Count} Agents");

@@ -20,19 +20,13 @@ namespace KrugerNationalPark.Agents
         {
             const double maxMaxDistance = double.MaxValue;
             var closestSource = _gisWaterLayer.ExploreClosestFullPotentialField(lat, lon, maxMaxDistance);
-            if (closestSource != null)
-            {
-                _waterSources.Add(closestSource);
-            }
+            if (closestSource != null) _waterSources.Add(closestSource);
         }
 
         internal Position GetClosestWaterSource(double lat, double lon)
         {
             var closestInSight = GetClosestWaterSourceInSight(lat, lon);
-            if (closestInSight != null)
-            {
-                return closestInSight;
-            }
+            if (closestInSight != null) return closestInSight;
 
             return _waterSources.Any()
                 ? _waterSources.OrderBy(source => source.DistanceInKmTo(Position.CreateGeoPosition(lon, lat)))
@@ -47,10 +41,8 @@ namespace KrugerNationalPark.Agents
             const double agentMaxSightInKm = 25;
             var closestInSight = _gisWaterLayer.ExploreClosestFullPotentialField(lat, lon, agentMaxSightInKm);
             if (closestInSight == null)
-            {
                 //Console.WriteLine("No water available at: " + lat + ", " + lon);
                 return null;
-            }
 
             _waterSources.Add(closestInSight);
             return closestInSight;

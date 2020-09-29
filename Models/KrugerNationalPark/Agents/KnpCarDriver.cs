@@ -1,15 +1,7 @@
 using System.Collections.Generic;
-using System.Linq;
-using Mars.Components.Agents;
-using Mars.Components.Environments;
-using Mars.Interfaces.Annotations;
-using Mars.Interfaces.Environments;
 using Mars.Interfaces.Environments.SpatialGraphEnvironment;
 using Mars.Interfaces.Layers;
-using SOHCarModel.Common;
 using SOHCarModel.Model;
-using SOHCarModel.Steering;
-using SOHDomain.Steering.Common;
 using SOHMultimodalModel.Output.Trips;
 
 namespace KrugerNationalPark.Agents
@@ -23,7 +15,7 @@ namespace KrugerNationalPark.Agents
             double destLat = 0, double destLon = 0, double velocity = 0,
             ISpatialEdge startingEdge = null, int capacity = 5, string stableId = "",
             string trafficCode = "south-african", string osmRoute = "")
-        :base(layer, register, unregister, driveMode, startLat, startLon, destLat, destLon, startingEdge, osmRoute)
+            : base(layer, register, unregister, driveMode, startLat, startLon, destLat, destLon, startingEdge, osmRoute)
         {
             Trip = new List<TripPosition>();
         }
@@ -34,7 +26,5 @@ namespace KrugerNationalPark.Agents
         {
             return Layer.EntityManager.Create<KnpCar>("type", "Golf");
         }
-        
-        
     }
 }

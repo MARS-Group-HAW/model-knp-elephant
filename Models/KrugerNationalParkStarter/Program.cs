@@ -36,12 +36,12 @@ namespace KrugerNationalParkStarter
             description.AddLayer<VectorWaterLayer>();
             description.AddLayer<ElephantLayer>();
             description.AddLayer<KnpCarLayer>();
-            
+
             // Second register the agent types with their respective layer type
             description.AddAgent<KnpCarDriver, KnpCarLayer>();
             description.AddAgent<Elephant, ElephantLayer>();
             description.AddEntity<KnpCar>();
-            
+
             // Starting up
             SimulationWorkflowState result = null;
             if (args != null)
@@ -61,7 +61,10 @@ namespace KrugerNationalParkStarter
                     var starter = SimulationStarter.Start(description, simConfig);
                     result = starter.Run();
                 }
-                else throw new ArgumentOutOfRangeException();
+                else
+                {
+                    throw new ArgumentOutOfRangeException();
+                }
             }
 
             // Generate proprietary trips output
@@ -75,20 +78,16 @@ namespace KrugerNationalParkStarter
         {
             var writer = new GeoJsonWriter();
             var featureCollection = new FeatureCollection();
-            
+
             var jsonConverters = writer.SerializerSettings.Converters
                 .Where(converter => converter is CoordinateConverter);
-            
-            foreach (var jsonConverter in jsonConverters)
-            {
-                writer.SerializerSettings.Converters.Remove(jsonConverter);
-            }
-            
+
+            foreach (var jsonConverter in jsonConverters) writer.SerializerSettings.Converters.Remove(jsonConverter);
+
             writer.SerializerSettings.Converters.Add(new TripPositionCoordinateConverter());
 
             var runtimeModelExecutionGroup = result.Model.ExecutionGroups[1];
             foreach (var tickClient in runtimeModelExecutionGroup)
-            {
                 if (tickClient is KnpCarDriver driver)
                 {
                     var trip = driver.Trip;
@@ -98,12 +97,11 @@ namespace KrugerNationalParkStarter
                         featureCollection.Add(new Feature(path, new AttributesTable()));
                     }
                 }
-            }
 
             File.WriteAllText("cars.geojson", writer.Write(featureCollection));
-            
-            if(Directory.Exists("tmp"))
-                Directory.Delete("tmp",true);
+
+            if (Directory.Exists("tmp"))
+                Directory.Delete("tmp", true);
         }
     }
 }

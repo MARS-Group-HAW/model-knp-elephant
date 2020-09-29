@@ -7,6 +7,5 @@ namespace KrugerNationalPark.Layers
     /// </summary>
     public class RasterTempLayer : RasterLayer
     {
-        
     }
 }

@@ -2,7 +2,6 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using GeoAPI.Geometries;
 using KrugerNationalPark.Layers;
 using Mars.Components.Environments;
@@ -16,20 +15,16 @@ namespace KrugerNationalPark.Agents
 {
     public class ElephantLayer : AbstractActiveLayer, ISteppedActiveLayer
     {
-        private readonly VectorWaterLayer _waterPotentialLayer;
-        private readonly RasterVegetationLayer _vegetationLayerDgvm;
         private readonly IDictionary<int, ElephantHerd> _herdMap;
-        private readonly RasterTempLayer _temperatureLayer;
+        private readonly NormalDistributionGenerator _normalDistributionGenerator;
         private readonly RasterFenceLayer _rasterFenceLayer;
         private readonly RasterShadeLayer _shadeLayer;
-        private readonly NormalDistributionGenerator _normalDistributionGenerator;
+        private readonly RasterTempLayer _temperatureLayer;
+        private readonly RasterVegetationLayer _vegetationLayerDgvm;
+        private readonly VectorWaterLayer _waterPotentialLayer;
         private RegisterAgent _registerAgent;
         private UnregisterAgent _unregisterAgent;
-        
-        public GeoHashEnvironment<Elephant> Environment { get; }
-        
-        public ConcurrentDictionary<Guid, Elephant> Entities { get; set; }
-        
+
 
         public ElephantLayer
         (
@@ -56,7 +51,11 @@ namespace KrugerNationalPark.Agents
             _rasterFenceLayer = rasterFenceLayer;
             _normalDistributionGenerator = new NormalDistributionGenerator(35, 30);
         }
-        
+
+        public GeoHashEnvironment<Elephant> Environment { get; }
+
+        public ConcurrentDictionary<Guid, Elephant> Entities { get; set; }
+
         bool ILayer.InitLayer
             (TInitData layerInitData, RegisterAgent registerAgentHandle, UnregisterAgent unregisterAgentHandle)
         {
@@ -75,17 +74,18 @@ namespace KrugerNationalPark.Agents
                 (agentInitConfig, registerAgentHandle, unregisterAgentHandle,
                     new List<ILayer>
                     {
-                        this, _waterPotentialLayer, _temperatureLayer, _shadeLayer, _vegetationLayerDgvm, _rasterFenceLayer
+                        this, _waterPotentialLayer, _temperatureLayer, _shadeLayer, _vegetationLayerDgvm,
+                        _rasterFenceLayer
                     },
                     Environment);
                 Console.WriteLine("[ElephantLayer]: Created " + Entities.Count + " Agents");
-                
+
                 // create herd objects
                 var listOfHerds =
                     Entities.Values.AsParallel().GroupBy(elephant => elephant.HerdId).Select(grp => grp.ToList())
                         .ToList();
                 Console.WriteLine("[ElephantLayer]: Created " + listOfHerds.Count + " Herds");
-                
+
                 foreach (var h in listOfHerds)
                 {
                     var leader = h.FirstOrDefault(e => e.Leading);
@@ -93,9 +93,7 @@ namespace KrugerNationalPark.Agents
                     {
                         leader = h.FirstOrDefault();
                         if (leader == null)
-                        {
                             throw new Exception("There is a herd without elephants, which is impossible!");
-                        }
 
                         leader.Leading = true;
                     }
@@ -103,57 +101,12 @@ namespace KrugerNationalPark.Agents
                     var other = h.Where(e => !e.Leading).ToList();
                     _herdMap.Add(leader.HerdId, new ElephantHerd(leader.HerdId, leader, other));
                 }
-                
+
                 Console.WriteLine("[ElephantLayer]: Filled Herds");
                 return true;
-            } 
-            
+            }
+
             return false;
-        }
-
-        public Elephant GetLeadingElephantByHerd(int herdId)
-        {
-            _herdMap.TryGetValue(herdId, out var herd);
-            return herd?.LeadingElephant;
-        }
-        
-        public void SpawnCalf(ElephantLayer elephantLayer, double latitude, double longitude, int herdId,
-            double biomassCellDifference = 1.0, double satietyMultiplier = 1.0, int tickSearchForFood = 1,
-            int biomassNeighbourSearchLvl = 1,
-            double minDehydration = 100)
-        {
-            var newElephant = new Elephant(elephantLayer, 
-                _registerAgent, _unregisterAgent, Environment, 
-                _waterPotentialLayer, _vegetationLayerDgvm,_rasterFenceLayer, _temperatureLayer, _shadeLayer, 
-                Guid.NewGuid(), latitude, longitude, herdId, "ELEPHANT_NEWBORN", 
-                false, biomassCellDifference, satietyMultiplier, tickSearchForFood,
-                biomassNeighbourSearchLvl, minDehydration);
-
-            Entities.TryAdd(newElephant.ID, newElephant);
-        }
-        
-        private void KillElephantHerd()
-        {
-            var herdId = _herdMap.Keys.FirstOrDefault();
-            _herdMap.TryGetValue(herdId, out var myHerd);
-            if (myHerd != null)
-            {
-                var leadingCow = myHerd.LeadingElephant;
-                var otherElephants = myHerd.OtherElephants;
-                leadingCow.Die(MattersOfDeath.Culling);
-                Entities.TryRemove(leadingCow.ID, out _);
-                foreach (var el in otherElephants)
-                {
-                    el.Die(MattersOfDeath.Culling);
-                    Entities.TryRemove(el.ID, out _);
-                }
-
-                _herdMap.Remove(herdId);
-            }
-            else
-            {
-                Console.WriteLine("[ElephantLayer] error killing a herd");
-            }
         }
 
         public override void PostTick()
@@ -198,6 +151,51 @@ namespace KrugerNationalPark.Agents
 //            }
         }
 
+        public Elephant GetLeadingElephantByHerd(int herdId)
+        {
+            _herdMap.TryGetValue(herdId, out var herd);
+            return herd?.LeadingElephant;
+        }
+
+        public void SpawnCalf(ElephantLayer elephantLayer, double latitude, double longitude, int herdId,
+            double biomassCellDifference = 1.0, double satietyMultiplier = 1.0, int tickSearchForFood = 1,
+            int biomassNeighbourSearchLvl = 1,
+            double minDehydration = 100)
+        {
+            var newElephant = new Elephant(elephantLayer,
+                _registerAgent, _unregisterAgent, Environment,
+                _waterPotentialLayer, _vegetationLayerDgvm, _rasterFenceLayer, _temperatureLayer, _shadeLayer,
+                Guid.NewGuid(), latitude, longitude, herdId, "ELEPHANT_NEWBORN",
+                false, biomassCellDifference, satietyMultiplier, tickSearchForFood,
+                biomassNeighbourSearchLvl, minDehydration);
+
+            Entities.TryAdd(newElephant.ID, newElephant);
+        }
+
+        private void KillElephantHerd()
+        {
+            var herdId = _herdMap.Keys.FirstOrDefault();
+            _herdMap.TryGetValue(herdId, out var myHerd);
+            if (myHerd != null)
+            {
+                var leadingCow = myHerd.LeadingElephant;
+                var otherElephants = myHerd.OtherElephants;
+                leadingCow.Die(MattersOfDeath.Culling);
+                Entities.TryRemove(leadingCow.ID, out _);
+                foreach (var el in otherElephants)
+                {
+                    el.Die(MattersOfDeath.Culling);
+                    Entities.TryRemove(el.ID, out _);
+                }
+
+                _herdMap.Remove(herdId);
+            }
+            else
+            {
+                Console.WriteLine("[ElephantLayer] error killing a herd");
+            }
+        }
+
         public int GetNextNormalDistribution()
         {
             return (int) _normalDistributionGenerator.GetNext();
@@ -206,10 +204,10 @@ namespace KrugerNationalPark.Agents
 
     public class NormalDistributionGenerator
     {
-        private readonly double _meanValue;
-        private readonly double _standardDeviation;
         private readonly double _maximumDeviation;
+        private readonly double _meanValue;
         private readonly Random _rand = new Random();
+        private readonly double _standardDeviation;
 
         public NormalDistributionGenerator(double meanValue, double maximumDeviation)
         {
@@ -230,15 +228,9 @@ namespace KrugerNationalPark.Agents
                                 Math.Sin(2.0 * Math.PI * u2);
             var random = _meanValue + _standardDeviation * randStdNormal;
 
-            if (random < (_meanValue - _maximumDeviation))
-            {
-                return _meanValue - _maximumDeviation;
-            }
+            if (random < _meanValue - _maximumDeviation) return _meanValue - _maximumDeviation;
 
-            if (random > (_meanValue + _maximumDeviation))
-            {
-                return _meanValue + _maximumDeviation;
-            }
+            if (random > _meanValue + _maximumDeviation) return _meanValue + _maximumDeviation;
 
             return random;
         }
