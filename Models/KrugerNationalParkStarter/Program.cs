@@ -88,6 +88,7 @@ namespace KrugerNationalParkStarter
 
             var runtimeModelExecutionGroup = result.Model.ExecutionGroups[1];
             foreach (var tickClient in runtimeModelExecutionGroup)
+            {
                 if (tickClient is KnpCarDriver driver)
                 {
                     var trip = driver.Trip;
@@ -97,6 +98,7 @@ namespace KrugerNationalParkStarter
                         featureCollection.Add(new Feature(path, new AttributesTable()));
                     }
                 }
+            }
 
             File.WriteAllText("cars.geojson", writer.Write(featureCollection));
 
