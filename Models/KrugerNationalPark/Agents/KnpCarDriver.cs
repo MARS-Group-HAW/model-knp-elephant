@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using Mars.Interfaces.Environments.SpatialGraphEnvironment;
 using Mars.Interfaces.Layers;
 using SOHCarModel.Model;
+using SOHDomain.Output;
 using SOHMultimodalModel.Output.Trips;
 
 namespace KrugerNationalPark.Agents
