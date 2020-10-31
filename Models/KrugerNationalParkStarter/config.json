@@ -6,7 +6,7 @@
     "deltaT": 1,
     "deltaTUnit": "seconds",
     "startTime": "2019-01-01T06:00:00.000Z",
-    "endTime": "2019-01-01T18:00:00.000Z",
+    "endTime": "2019-01-01T08:00:00.000Z",
     "output": "csv",
     "options": {
       "numberFormat": "G"
@@ -28,7 +28,8 @@
     },
     {
       "name": "RasterVegetationLayer",
-      "output": "csv",
+      "output": "asc",
+      "outputfrequency": 60,
       "file": "model_input/gis_raster_biomass_ts.zip"
     },
     {
@@ -57,7 +58,7 @@
     },
     {
       "name": "KnpCarDriver",
-      "count": 1,
+      "count": 0,
       "frequency": 1,
       "outputFrequency": 60,
       "outputType": "individual",
