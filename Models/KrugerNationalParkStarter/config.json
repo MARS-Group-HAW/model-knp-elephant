@@ -10,7 +10,10 @@
     "output": "csv",
     "csvOptions": {
       "numberFormat": "G",
-      "outputPath": "/tmp/"
+      "outputPath": "~/Downloads/"
+    },
+    "ascOptions": {
+      "outputPath": "~/Downloads/"
     },
     "console" : true
   },
@@ -30,7 +33,7 @@
     {
       "name": "RasterVegetationLayer",
       "output": "asc",
-      "outputfrequency": 60,
+      "outputFrequency": 3600,
       "file": "model_input/gis_raster_biomass_ts.zip"
     },
     {
