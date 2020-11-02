@@ -1,12 +1,10 @@
 using System;
 using System.Linq;
-using Mars.Interfaces.Environments.GraphCommon;
-using Mars.Interfaces.Environments.SpatialGraphEnvironment;
+using Mars.Interfaces.Environments;
 using Mars.Mathematics;
 using SOHCarModel.Steering;
 using SOHDomain.Output;
 using SOHDomain.Steering.Handles;
-using SOHMultimodalModel.Output.Trips;
 
 namespace KrugerNationalPark.Agents
 {

@@ -12,14 +12,14 @@ namespace KrugerNationalPark.Agents
 {
     public class Elephant : Agent, IPositionable
     {
-        [PublishForMappingInMars]
+        [ActiveConstructor]
         public Elephant
         (ElephantLayer layer,
             RegisterAgent registerAgent,
             UnregisterAgent unregisterAgent,
             GeoHashEnvironment<Elephant> environment,
             VectorWaterLayer waterPotentialLayer,
-            RasterVegetationLayer vegetationLayerDgvm,
+            RasterVegetationLayer vegetationLayerDigitalVegetation,
             RasterFenceLayer rasterFenceLayer,
             RasterTempLayer temperatureTimeSeriesLayer,
             RasterShadeLayer shadeLayer,
@@ -63,7 +63,7 @@ namespace KrugerNationalPark.Agents
 
             //Layers
             _elephantLayer = layer;
-            _vegetationLayerDgvm = vegetationLayerDgvm;
+            _vegetationLayerDigitalVegetation = vegetationLayerDigitalVegetation;
             _rasterFenceLayer = rasterFenceLayer;
             _temperatureLayer = temperatureTimeSeriesLayer;
             _shadeLayer = shadeLayer;
@@ -175,7 +175,7 @@ namespace KrugerNationalPark.Agents
 
         // All required layer by used by this elephant entity
         private readonly ElephantLayer _elephantLayer;
-        private readonly RasterVegetationLayer _vegetationLayerDgvm;
+        private readonly RasterVegetationLayer _vegetationLayerDigitalVegetation;
         private readonly RasterTempLayer _temperatureLayer;
         private readonly RasterShadeLayer _shadeLayer;
         private readonly RasterFenceLayer _rasterFenceLayer;
@@ -449,9 +449,9 @@ namespace KrugerNationalPark.Agents
 
             if (_elephantLayer.GetCurrentTick() % TickSearchForFood == 0)
             {
-                if (_vegetationLayerDgvm.IsPointInside(Position))
+                if (_vegetationLayerDigitalVegetation.IsPointInside(Position))
                 {
-                    var all = _vegetationLayerDgvm.Explore(Position, double.MaxValue, 4);
+                    var all = _vegetationLayerDigitalVegetation.Explore(Position, double.MaxValue, 4);
                     var res = all.OrderBy(a => a.Node.Value).Last();
 
                     if (res.Node?.NodePosition != null)
@@ -461,10 +461,10 @@ namespace KrugerNationalPark.Agents
 
                         if (_rasterFenceLayer.IsPointInside(res.Node.NodePosition))
                         {
-                            var targetLon = _vegetationLayerDgvm.LowerLeft.X +
-                                            targetX * _vegetationLayerDgvm.CellWidth;
-                            var targetLat = _vegetationLayerDgvm.LowerLeft.Y +
-                                            targetY * _vegetationLayerDgvm.CellHeight;
+                            var targetLon = _vegetationLayerDigitalVegetation.LowerLeft.X +
+                                            targetX * _vegetationLayerDigitalVegetation.CellWidth;
+                            var targetLat = _vegetationLayerDigitalVegetation.LowerLeft.Y +
+                                            targetY * _vegetationLayerDigitalVegetation.CellHeight;
                             MoveTowardsPosition(targetLat, targetLon);
                             return;
                         }
@@ -589,10 +589,10 @@ namespace KrugerNationalPark.Agents
         private void TryToEatFromVegetationLayer()
         {
             var biomassTaken = 0.0;
-            if (_vegetationLayerDgvm.Extent.Contains(Position.ToCoordinate()))
-                if (_vegetationLayerDgvm.GetValue(Position) >= SatietyIntakeHourly[_elephantLifePeriod])
+            if (_vegetationLayerDigitalVegetation.Extent.Contains(Position.ToCoordinate()))
+                if (_vegetationLayerDigitalVegetation.GetValue(Position) >= SatietyIntakeHourly[_elephantLifePeriod])
                 {
-                    _vegetationLayerDgvm.Reduce(Position.X, Position.Y, SatietyIntakeHourly[_elephantLifePeriod]);
+                    _vegetationLayerDigitalVegetation.Reduce(Position.X, Position.Y, SatietyIntakeHourly[_elephantLifePeriod]);
                     biomassTaken = SatietyIntakeHourly[_elephantLifePeriod];
                 }
 
