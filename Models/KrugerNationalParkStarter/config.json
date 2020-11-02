@@ -8,8 +8,9 @@
     "startTime": "2019-01-01T06:00:00.000Z",
     "endTime": "2019-01-01T08:00:00.000Z",
     "output": "csv",
-    "options": {
-      "numberFormat": "G"
+    "csvOptions": {
+      "numberFormat": "G",
+      "outputPath": "/tmp/"
     },
     "console" : true
   },
