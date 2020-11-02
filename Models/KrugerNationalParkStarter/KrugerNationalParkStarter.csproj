@@ -4,18 +4,29 @@
         <OutputType>Exe</OutputType>
         <TargetFramework>netcoreapp3.1</TargetFramework>
         <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
+        <AssemblyName>KrugerNationalParkBox</AssemblyName>
+    </PropertyGroup>
+
+    <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+      <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
     </PropertyGroup>
 
     <ItemGroup>
       <Compile Remove="tmp\**" />
+      <Compile Remove="KrugerNationalParkBase\**" />
     </ItemGroup>
 
     <ItemGroup>
       <EmbeddedResource Remove="tmp\**" />
+      <EmbeddedResource Remove="KrugerNationalParkBase\**" />
     </ItemGroup>
 
     <ItemGroup>
       <None Remove="tmp\**" />
+      <None Remove="KrugerNationalParkBase\**" />
+      <None Remove="KrugerNationalParkBase_LINUX.zip" />
+      <None Remove="KrugerNationalParkBase_MACOSX.zip" />
+      <None Remove="KrugerNationalParkBase_WINDOWS.zip" />
     </ItemGroup>
 
     <ItemGroup>
