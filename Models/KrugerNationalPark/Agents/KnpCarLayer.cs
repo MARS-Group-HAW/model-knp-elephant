@@ -35,17 +35,17 @@ namespace KrugerNationalPark.Agents
         ///         This layer is in a state which allows
         ///         it to start the simulation.
         ///     </post>
-        ///     <param name="layerInitData">
+        ///     <param name="layerLayerInitData">
         ///         A data type holding the
         ///         information of how to initialize a layer.
         ///     </param>
         ///     <param name="registerAgentHandle"> </param>
         /// </summary>
         /// <returns>True if init finished successfully, false otherwise</returns>
-        public override bool InitLayer(TInitData layerInitData, RegisterAgent registerAgentHandle,
+        public override bool InitLayer(LayerInitData layerLayerInitData, RegisterAgent registerAgentHandle,
             UnregisterAgent unregisterAgentHandle)
         {
-            var result = base.InitLayer(layerInitData, registerAgentHandle, unregisterAgentHandle);
+            var result = base.InitLayer(layerLayerInitData, registerAgentHandle, unregisterAgentHandle);
             Console.WriteLine($"[KnpCarLayer]: Created {Driver.Count} Agents");
             return result;
         }
