@@ -2,7 +2,6 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using GeoAPI.Geometries;
 using KrugerNationalPark.Layers;
 using Mars.Components.Environments;
 using Mars.Components.Layers;
@@ -10,6 +9,7 @@ using Mars.Components.Services;
 using Mars.Interfaces.Environments;
 using Mars.Interfaces.Layers;
 using Mars.Interfaces.Layers.Initialization;
+using NetTopologySuite.Geometries;
 
 namespace KrugerNationalPark.Agents
 {
