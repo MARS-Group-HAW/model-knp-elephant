@@ -57,15 +57,15 @@ namespace KrugerNationalPark.Agents
         public ConcurrentDictionary<Guid, Elephant> Entities { get; set; }
 
         bool ILayer.InitLayer
-            (LayerInitData layerLayerInitData, RegisterAgent registerAgentHandle, UnregisterAgent unregisterAgentHandle)
+            (LayerInitData layerInitData, RegisterAgent registerAgentHandle, UnregisterAgent unregisterAgentHandle)
         {
-            base.InitLayer(layerLayerInitData, registerAgentHandle, unregisterAgentHandle);
+            base.InitLayer(layerInitData, registerAgentHandle, unregisterAgentHandle);
             //params needed for calf spawn
             _registerAgent = registerAgentHandle;
             _unregisterAgent = unregisterAgentHandle;
 
             var agentInitConfig =
-                layerLayerInitData.AgentInitConfigs.FirstOrDefault(mapping => mapping.Type.MetaType == typeof(Elephant));
+                layerInitData.AgentInitConfigs.FirstOrDefault(mapping => mapping.Type.MetaType == typeof(Elephant));
 
             if (agentInitConfig != null)
             {
