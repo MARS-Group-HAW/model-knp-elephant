@@ -41,6 +41,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\KrugerNationalPark\KrugerNationalPark.csproj" />
+      <ProjectReference Include="..\SOHMultimodalModel\SOHMultimodalModel.csproj" />
     </ItemGroup>
 
 </Project>
