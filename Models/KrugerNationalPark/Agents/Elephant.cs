@@ -593,7 +593,8 @@ namespace KrugerNationalPark.Agents
             if (_vegetationLayerDigitalVegetation.Extent.Contains(Position.ToCoordinate()))
                 if (_vegetationLayerDigitalVegetation.GetValue(Position) >= SatietyIntakeHourly[_elephantLifePeriod])
                 {
-                    _vegetationLayerDigitalVegetation.Reduce(Position.X, Position.Y, SatietyIntakeHourly[_elephantLifePeriod]);
+                    _vegetationLayerDigitalVegetation.Reduce(Position.X, Position.Y,
+                        SatietyIntakeHourly[_elephantLifePeriod]);
                     biomassTaken = SatietyIntakeHourly[_elephantLifePeriod];
                 }
 
