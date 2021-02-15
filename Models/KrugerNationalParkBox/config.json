@@ -1,55 +1,52 @@
 {
-  "execution": {
-    "maxProcessCount" : 1
-  },
   "globals": {
     "deltaT": 1,
     "deltaTUnit": "seconds",
     "startTime": "2019-01-01T06:00:00.000Z",
     "endTime": "2019-01-01T18:00:00.000Z",
     "output": "csv",
+    "console" : true,
     "options": {
       "numberFormat": "G"
-    },
-    "console" : true
+    }
   },
   "layers": [
     {
       "name": "RasterTempLayer",
-      "file": "model_input/RCP8.5_2010_2050_temp.zip"
+      "file": "resources/RCP8.5_2010_2050_temp.zip"
     },
     {
       "name": "RasterFenceLayer",
-      "file": "model_input/gis_raster_border.zip"
+      "file": "resources/gis_raster_border.zip"
     },
     {
       "name": "RasterShadeLayer",
-      "file": "model_input/gis_raster_shade.zip"
+      "file": "resources/gis_raster_shade.zip"
     },
     {
       "name": "RasterVegetationLayer",
       "output": "csv",
-      "file": "model_input/gis_raster_biomass_ts.zip"
+      "file": "resources/gis_raster_biomass_ts.zip"
     },
     {
       "name": "VectorWaterLayer",
-      "file": "model_input/merged_waters_fixed_with_fence_buffer.geojson"
+      "file": "resources/merged_waters_fixed_with_fence_buffer.geojson"
     },
     {
       "name": "KnpCarLayer",
-      "file": "model_input/knp_graph.graphml"
+      "file": "resources/knp_graph.graphml"
     }
   ],
   "entities": [
     {
       "name": "KnpCar",
-      "file": "model_input/car.csv"
+      "file": "resources/car.csv"
     }
   ],
   "agents": [
     {
       "name": "Elephant",
-      "file": "model_input/elephant1989_constant_population_15k.csv",
+      "file": "resources/elephant1989_constant_population_15k.csv",
       "count": 100,
       "frequency": 60,
       "outputFrequency": 60,
@@ -61,8 +58,7 @@
       "frequency": 1,
       "outputFrequency": 60,
       "outputType": "individual",
-      //"outputFilter": [{"parameter": "Tick", "operator": "in", "values": [120]}],
-      "file": "model_input/car_init.csv",
+      "file": "resources/car_init.csv",
       "mapping": [
         {
           "parameter": "route",
@@ -76,14 +72,6 @@
           "parameter": "width",
           "value": 2
         },
-        //{
-        //  "parameter": "maxSpeed",
-        //  "value": 8
-        //},
-        //{
-        //  "parameter": "driveMode",
-        //  "value": 3
-        //},
         {
           "parameter": "trafficCode",
           "value": "south-african"
