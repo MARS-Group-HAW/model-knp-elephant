@@ -8,7 +8,6 @@ using Mars.Components.Layers;
 using Mars.Components.Services;
 using Mars.Interfaces.Environments;
 using Mars.Interfaces.Layers;
-using Mars.Interfaces.Layers.Initialization;
 using NetTopologySuite.Geometries;
 
 namespace KrugerNationalPark.Agents
