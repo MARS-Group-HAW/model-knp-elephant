@@ -21,7 +21,7 @@ namespace KrugerNationalPark.Agents
 
         protected override CarSteeringHandle CreateSteeringHandle(ICarSteeringCapable steeringCapable)
         {
-            return new KnpCarSteeringHandle((KnpCarLayer) Layer, Environment, this, steeringCapable);
+            return new KnpCarSteeringHandle(KnpCarLayer, Environment, this, steeringCapable);
         }
     }
 }
