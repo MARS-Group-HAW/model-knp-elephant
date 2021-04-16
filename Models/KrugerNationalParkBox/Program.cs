@@ -52,19 +52,20 @@ namespace KrugerNationalParkStarter
                     LoggerFactory.ActivateConsoleLogging();
                 }
 
+                string file;
                 if (args.Any(s => s.Equals("-sm")))
                 {
                     var index = args.IndexOf(s => s == "-sm");
-                    var file = File.ReadAllText(args[index + 1]);
-                    var simConfig = SimulationConfig.Deserialize(file);
-
-                    var starter = SimulationStarter.Start(description, simConfig);
-                    result = starter.Run();
+                    file = File.ReadAllText(args[index + 1]);
                 }
                 else
                 {
-                    throw new ArgumentOutOfRangeException();
+                    file = File.ReadAllText("config.json");
                 }
+
+                var simConfig = SimulationConfig.Deserialize(file);
+                var starter = SimulationStarter.Start(description, simConfig);
+                result = starter.Run();
             }
 
             // Generate proprietary trips output

@@ -1,3 +1,19 @@
+// MARS KNP Elephant agent description 
+// Copyright (C) 2020  MARS Group, Thomas Clemen
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -57,12 +73,12 @@ namespace KrugerNationalPark.Agents
                 {ElephantLifePeriod.Adult, SatietyMultiplier * 0.01167} // 210 kg food a day, 8,75 kg per hour
             };
 
-            //flock
+            // herding
             Leading = isLeading;
             HerdId = herdId;
             _elephantType = _elephantTypeMap[elephantType];
 
-            //Layers
+            // layers
             _elephantLayer = layer;
             _vegetationLayerDigitalVegetation = vegetationLayerDigitalVegetation;
             _rasterFenceLayer = rasterFenceLayer;
@@ -72,7 +88,7 @@ namespace KrugerNationalPark.Agents
             _hoursWithoutFood = 0;
             Satiety = _random.Next(50, 100);
 
-            //Water
+            // water
             Hydration = _random.Next(50, 150);
             _hoursWithoutWater = 0;
             _currentHourOfTheDay = 0;
@@ -136,7 +152,7 @@ namespace KrugerNationalPark.Agents
 
             _waterSources = new WaterSources(waterPotentialLayer);
 
-            // Leading elephant knows about single surrounding waterpoint
+            // Leading elephant knows about single surrounding water point
             if (Leading) _waterSources.AddInitialWaterSource(lat, lon);
 
             Position = Position.CreateGeoPosition(lon, lat);
@@ -174,7 +190,7 @@ namespace KrugerNationalPark.Agents
         private readonly WaterSources _waterSources;
         private Elephant _elephantLeader;
 
-        // All required layer by used by this elephant entity
+        // all required layer by used by this elephant entity
         private readonly ElephantLayer _elephantLayer;
         private readonly RasterVegetationLayer _vegetationLayerDigitalVegetation;
         private readonly RasterTempLayer _temperatureLayer;
@@ -233,9 +249,9 @@ namespace KrugerNationalPark.Agents
         /// </summary>
         public int Age { get; set; }
 
-        public bool Leading { get; set; } //Flock related
+        public bool Leading { get; set; } // herding related
 
-        internal double Satiety { get; set; } // Food related
+        internal double Satiety { get; set; } // food related
 
         public string TreeInteraction { get; set; } = "none";
 
@@ -343,29 +359,10 @@ namespace KrugerNationalPark.Agents
                 //seek shadow 
                 // TODO: it would be better to make that dependable from temperature
                 case 14:
-                    // CHECK: Dieses Konstrukt verstehe ich nicht. Ich würde davon ausgehen, dass 
-                    // shadePosition nach der Ausführung die Zellkoordinaten mit dem meisten
-                    // Schatten beinhaltet. Aber ich verstehe auch Lennart's Implementierung nicht.
-                    /* Janus:
-                     In der Methode ExploreClosestFullPotentialField wird GetClosestCellWithValue ausgeführt, der "Value"
-                     wird dort auch mit FullPotential = 100 definiert. Wieso hier statisch ein Wert (100) gewählt wurde,
-                     kann ich nicht beurteilen.
-                     Die von Dir vorgeschlagene Methode GetNeighbourCellWithMaxValue gibt nur einen direkten Nachbarn
-                     wieder.
-                     Julius: Der Wert 100 wird gewaehlt weil die Shade Datei nur binaer 0 oder 100 kennt. Durch den
-                     Check auf 100 prueft Lennart ob sich an dieser Stell Schatten befindet oder nicht. Die 
-                     GetNeighbourCellWithMaxValue Methode wuerde nur die 4/8 Nachbarzellen durchsuchen und diejenige
-                     mit dem groesten Wert zurueck liefern. Welchen Bereich das im echten Leben abdeckt haengt davon 
-                     ab wie gross so eine Zelle ist
-                    */
-
+                
                     var shadePosition =
                         _shadeLayer.ExploreClosestFullPotentialField(Position.Latitude, Position.Longitude, 100);
 
-                    /* Janus:
-                     Wenn kein Schatten gefunden wurde, soll doch nach wie vor Satitey verbrannt werden oder nicht?
-                     Julius: Ja, dann sollte die volle Menge verbrannt werden
-                    */
                     if (shadePosition == null)
                     {
                         BurnSatiety(SatietyIntakeHourly[_elephantLifePeriod]);
@@ -374,8 +371,7 @@ namespace KrugerNationalPark.Agents
                     }
 
                     MoveTowardsPosition(shadePosition.Latitude, shadePosition.Longitude);
-
-
+                    
                     BurnSatiety(SatietyIntakeHourly[_elephantLifePeriod] * 0.5);
                     break;
 
