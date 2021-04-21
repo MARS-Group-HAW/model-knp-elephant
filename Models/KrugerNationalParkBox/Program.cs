@@ -14,6 +14,7 @@ using NetTopologySuite.Features;
 using NetTopologySuite.Geometries;
 using NetTopologySuite.IO;
 using NetTopologySuite.IO.Converters;
+using SOHDomain.Output;
 using SOHMultimodalModel.Output.Trips;
 
 namespace KrugerNationalParkStarter
@@ -35,11 +36,11 @@ namespace KrugerNationalParkStarter
             description.AddLayer<RasterVegetationLayer>();
             description.AddLayer<VectorWaterLayer>();
             description.AddLayer<ElephantLayer>();
-            description.AddLayer<KnpCarLayer>();
+            description.AddLayer<TouristLayer>();
 
             // Second register the agent types with their respective layer type
-            description.AddAgent<KnpCarDriver, KnpCarLayer>();
-            description.AddAgent<Elephant, ElephantLayer>();
+            var tourist = description.AddAgent<Tourist, TouristLayer>();
+            var elephant = description.AddAgent<Elephant, ElephantLayer>();
             description.AddEntity<KnpCar>();
 
             // Starting up
@@ -69,40 +70,10 @@ namespace KrugerNationalParkStarter
             }
 
             // Generate proprietary trips output
-            GenerateTripResult(result);
+            TripsOutputAdapter.PrintTripResult(result.Model.ExecutionAgentTypeGroups.Values
+                .SelectMany(agents => agents.Values).OfType<ITripSavingAgent>());
             watch.Stop();
             Console.WriteLine($"Simulation finished and last {watch.Elapsed}");
-        }
-
-
-        private static void GenerateTripResult(SimulationWorkflowState result)
-        {
-            var writer = new GeoJsonWriter();
-            var featureCollection = new FeatureCollection();
-
-            var jsonConverters = writer.SerializerSettings.Converters
-                .Where(converter => converter is CoordinateConverter);
-
-            foreach (var jsonConverter in jsonConverters) writer.SerializerSettings.Converters.Remove(jsonConverter);
-
-            writer.SerializerSettings.Converters.Add(new TripPositionCoordinateConverter());
-
-            var runtimeModelExecutionGroup = result.Model.ExecutionGroups[1];
-            foreach (var tickClient in runtimeModelExecutionGroup)
-                if (tickClient is KnpCarDriver driver)
-                {
-                    var trip = driver.Trip;
-                    if (trip.Count >= 2)
-                    {
-                        var path = new LineString(trip.ToArray());
-                        featureCollection.Add(new Feature(path, new AttributesTable()));
-                    }
-                }
-
-            File.WriteAllText("cars.geojson", writer.Write(featureCollection));
-
-            if (Directory.Exists("tmp"))
-                Directory.Delete("tmp", true);
         }
     }
 }

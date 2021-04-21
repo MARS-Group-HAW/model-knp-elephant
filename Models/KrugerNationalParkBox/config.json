@@ -3,7 +3,7 @@
     "deltaT": 1,
     "deltaTUnit": "seconds",
     "startTime": "2019-01-01T06:00:00.000Z",
-    "endTime": "2019-01-01T18:00:00.000Z",
+    "endTime": "2019-01-01T07:00:00.000Z",
     "output": "csv",
     "console" : true,
     "options": {
@@ -25,7 +25,6 @@
     },
     {
       "name": "RasterVegetationLayer",
-      "output": "csv",
       "file": "resources/gis_raster_biomass_ts.zip"
     },
     {
@@ -33,7 +32,7 @@
       "file": "resources/merged_waters_fixed_with_fence_buffer.geojson"
     },
     {
-      "name": "KnpCarLayer",
+      "name": "TouristLayer",
       "file": "resources/knp_graph.graphml"
     }
   ],
@@ -53,8 +52,8 @@
       "outputtype": "individual"
     },
     {
-      "name": "KnpCarDriver",
-      "count": 1,
+      "name": "Tourist",
+      "count": 100,
       "frequency": 1,
       "outputFrequency": 60,
       "outputType": "individual",

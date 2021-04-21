@@ -1,29 +1,22 @@
-using System;
 using System.Linq;
+using KrugerNationalPark.Layers;
 using Mars.Interfaces.Environments;
 using Mars.Numerics;
+using SOHCarModel.Model;
 using SOHCarModel.Steering;
-using SOHDomain.Output;
 using SOHDomain.Steering.Handles;
 
 namespace KrugerNationalPark.Agents
 {
     public class KnpCarSteeringHandle : CarSteeringHandle
     {
-        private static readonly DateTime ReferenceDateTime = new DateTime(1970, 1, 1);
-        private readonly KnpCarLayer _carLayer;
+        private readonly TouristLayer _carLayer;
 
-        public KnpCarSteeringHandle(KnpCarLayer carLayer,
-            ISpatialGraphEnvironment environment, KnpCar car,
-            ICarSteeringCapable steeringCapable)
-            : base(environment, car)
+        public KnpCarSteeringHandle(TouristLayer carLayer, ISpatialGraphEnvironment environment, Car car) : base(environment, car)
         {
             _carLayer = carLayer;
-            KnpCar = car;
         }
-
-        public KnpCar KnpCar { get; }
-
+        
         /// <summary>
         ///     Provides an entry point for specialized types to provide some extra logic into
         ///     the movement operation before the
@@ -37,13 +30,6 @@ namespace KrugerNationalPark.Agents
                 return HandleWildlifeAhead(deceleration, speedElephant, distanceElephant);
 
             return deceleration;
-        }
-
-        /// <summary>Provides the possibility to tick the moving road user.</summary>
-        public override void Move()
-        {
-            base.Move();
-            SaveTripPosition();
         }
 
         private double HandleWildlifeAhead(double deceleration, double speedElephantAhead, double distanceElephantAhead)
@@ -82,13 +68,6 @@ namespace KrugerNationalPark.Agents
             }
 
             return false;
-        }
-
-        private void SaveTripPosition()
-        {
-            var clock = _carLayer.Context.CurrentTimePoint.GetValueOrDefault();
-            var time = (int) clock.Subtract(ReferenceDateTime).TotalSeconds;
-            KnpCar.CarDriver.Trip.Add(new TripPosition(Position.Longitude, Position.Latitude) {UnixTimestamp = time});
         }
     }
 }

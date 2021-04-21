@@ -1,3 +1,4 @@
+using KrugerNationalPark.Layers;
 using Mars.Interfaces.Annotations;
 using SOHCarModel.Model;
 using SOHCarModel.Steering;
@@ -15,13 +16,12 @@ namespace KrugerNationalPark.Agents
             TrafficCode = "south-african";
         }
 
-        [PropertyDescription] public KnpCarLayer KnpCarLayer { get; set; }
-
-        [PropertyDescription] public KnpCarDriver CarDriver => (KnpCarDriver) Driver;
+        [PropertyDescription] 
+        public TouristLayer TouristLayer { get; set; }
 
         protected override CarSteeringHandle CreateSteeringHandle(ICarSteeringCapable steeringCapable)
         {
-            return new KnpCarSteeringHandle(KnpCarLayer, Environment, this, steeringCapable);
+            return new KnpCarSteeringHandle(TouristLayer, Environment, this);
         }
     }
 }

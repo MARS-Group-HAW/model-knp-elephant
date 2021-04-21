@@ -24,10 +24,11 @@ using Mars.Components.Environments;
 using Mars.Interfaces.Annotations;
 using Mars.Interfaces.Environments;
 using Mars.Interfaces.Layers;
+using SOHDomain.Output;
 
 namespace KrugerNationalPark.Agents
 {
-    public class Elephant : Agent, IPositionable
+    public class Elephant : Agent, IPositionable, ITripSavingAgent
     {
         [ActiveConstructor]
         public Elephant
@@ -57,6 +58,7 @@ namespace KrugerNationalPark.Agents
         {
             _random = new Random(ID.GetHashCode());
 
+            TripsCollection = new TripsCollection(layer.Context);
             BiomassCellDifference = biomassCellDifference;
             TickSearchForFood = tickSearchForFood;
             BiomassNeighbourSearchLvl = biomassNeighbourSearchLvl;
@@ -284,6 +286,7 @@ namespace KrugerNationalPark.Agents
 
         protected override void Reason()
         {
+            TripsCollection.Add(Position);
             if (_elephantLayer.Context.CurrentTimePoint != null)
                 _currentHourOfTheDay = _elephantLayer.Context.CurrentTimePoint.Value.Hour;
             else
@@ -712,5 +715,8 @@ namespace KrugerNationalPark.Agents
         }
 
         #endregion
+
+        public int StableId { get; }
+        public TripsCollection TripsCollection { get; }
     }
 }
