@@ -10,9 +10,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KrugerNationalParkBox", "Models\KrugerNationalParkBox\KrugerNationalParkBox.csproj", "{A4389E80-8A52-4BA6-A688-A91C523300C6}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Scenarios", "Scenarios", "{EEF1A345-88E8-4E13-AD17-E760BA7DEB6A}"
-ProjectSection(SolutionItems) = preProject
-	Models\build.sh = Models\build.sh
-EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
