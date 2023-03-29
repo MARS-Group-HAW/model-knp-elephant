@@ -30,18 +30,9 @@
     {
       "name": "VectorWaterLayer",
       "file": "resources/merged_waters_fixed_with_fence_buffer.geojson"
-    },
-    {
-      "name": "TouristLayer",
-      "file": "resources/knp_graph.graphml"
     }
   ],
-  "entities": [
-    {
-      "name": "KnpCar",
-      "file": "resources/car.csv"
-    }
-  ],
+  "entities": [],
   "agents": [
     {
       "name": "Elephant",

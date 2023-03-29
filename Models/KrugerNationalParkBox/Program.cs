@@ -36,12 +36,9 @@ namespace KrugerNationalParkStarter
             description.AddLayer<RasterVegetationLayer>();
             description.AddLayer<VectorWaterLayer>();
             description.AddLayer<ElephantLayer>();
-            description.AddLayer<TouristLayer>();
 
             // Second register the agent types with their respective layer type
-            var tourist = description.AddAgent<Tourist, TouristLayer>();
             var elephant = description.AddAgent<Elephant, ElephantLayer>();
-            description.AddEntity<KnpCar>();
 
             // Starting up
             SimulationWorkflowState result = null;
