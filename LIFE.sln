@@ -1,0 +1,47 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27703.2026
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Models", "Models", "{50AF57B9-F3BE-48CC-91D8-4E919C8D045F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KrugerNationalPark", "Models\KrugerNationalPark\KrugerNationalPark.csproj", "{C20AEDEC-A256-4AD0-A513-8ACD3139C9C2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KrugerNationalParkBox", "Models\KrugerNationalParkBox\KrugerNationalParkBox.csproj", "{A4389E80-8A52-4BA6-A688-A91C523300C6}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Scenarios", "Scenarios", "{EEF1A345-88E8-4E13-AD17-E760BA7DEB6A}"
+ProjectSection(SolutionItems) = preProject
+	Models\build.sh = Models\build.sh
+EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+		Full|Any CPU = Full|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C20AEDEC-A256-4AD0-A513-8ACD3139C9C2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C20AEDEC-A256-4AD0-A513-8ACD3139C9C2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C20AEDEC-A256-4AD0-A513-8ACD3139C9C2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C20AEDEC-A256-4AD0-A513-8ACD3139C9C2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C20AEDEC-A256-4AD0-A513-8ACD3139C9C2}.Full|Any CPU.ActiveCfg = Debug|Any CPU
+		{C20AEDEC-A256-4AD0-A513-8ACD3139C9C2}.Full|Any CPU.Build.0 = Debug|Any CPU
+		{A4389E80-8A52-4BA6-A688-A91C523300C6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A4389E80-8A52-4BA6-A688-A91C523300C6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A4389E80-8A52-4BA6-A688-A91C523300C6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A4389E80-8A52-4BA6-A688-A91C523300C6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A4389E80-8A52-4BA6-A688-A91C523300C6}.Full|Any CPU.ActiveCfg = Debug|Any CPU
+		{A4389E80-8A52-4BA6-A688-A91C523300C6}.Full|Any CPU.Build.0 = Debug|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{C20AEDEC-A256-4AD0-A513-8ACD3139C9C2} = {50AF57B9-F3BE-48CC-91D8-4E919C8D045F}
+		{A4389E80-8A52-4BA6-A688-A91C523300C6} = {EEF1A345-88E8-4E13-AD17-E760BA7DEB6A}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {C4F712B8-6C5C-4036-87BE-AFF59ACFC99C}
+	EndGlobalSection
+EndGlobal
