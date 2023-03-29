@@ -13,7 +13,7 @@ To start the model the attached `config.json` file is required. The following co
 dotnet run --sm config.json
 ```  
 
-All input files are located in the `model_input` directory and can be customized according to your needs.
+All input files are located in the `resources` directory and can be customized according to your needs.
 
 ## Building the Simulation Box
 
@@ -30,7 +30,7 @@ cd KrugerNationalParkBase/KrugerNationalParkBase_MACOSX/
 ./KrugerNationalParkBox --sm config.json
 ```
 
-Simulation results are produced in the executed directory or against the configuration in the selected ``config.json`` file.
+Simulation results are produced in the executed directory or against the configuration in the selected `config.json` file.
 
 > **Warning**
 > On macOS there may be problems with the verification of the box and additional files with the extension `*.dylib` and `*.dll`. Please execute the following command to make them accessible in your terminal:
