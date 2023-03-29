@@ -35,3 +35,5 @@ Simulation results are produced in the executed directory or against the configu
 > **Warning**
 > On macOS there may be problems with the verification of the box and additional files with the extension `*.dylib` and `*.dll`. Please execute the following command to make them accessible in your terminal:
 > `xattr -d com.apple.quarantine ./KrugerNationalParkBox`
+> `xattr -d com.apple.quarantine ./*.dll`
+> `xattr -d com.apple.quarantine ./*.dylib`
