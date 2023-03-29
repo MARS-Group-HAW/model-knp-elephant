@@ -9,6 +9,8 @@
         <RootNamespace>KrugerNationalParkStarter</RootNamespace>
     </PropertyGroup>
 
+    
+    
     <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
       <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
     </PropertyGroup>
@@ -42,7 +44,5 @@
 
     <ItemGroup>
       <ProjectReference Include="..\KrugerNationalPark\KrugerNationalPark.csproj" />
-      <ProjectReference Include="..\SOHMultimodalModel\SOHMultimodalModel.csproj" />
     </ItemGroup>
-
 </Project>
