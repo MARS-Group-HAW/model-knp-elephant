@@ -1,5 +1,10 @@
 # KrugerNationalPark Elephant Model
 
+> **⚠️ Deprecated:** This repository has been superseded by
+> [MARS-Group-HAW/model-knp](https://github.com/MARS-Group-HAW/model-knp), which integrated this elephant
+> model in June 2024 and has continued to receive updates since. This repo is archived and kept only for
+> historical reference — please use `model-knp` going forward.
+
 The basic model for the Kruger National Park simulates the behavior of South African elephants in the Savannah over a longer period of time.
 Tourism, feeding sites, water points and climatic influences are combined to study the effects of limited or unlimited resources on elephant population development.
 
